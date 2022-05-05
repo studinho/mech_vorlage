@@ -14,7 +14,6 @@ running = False          # Controller state
 count = 0                # Interrupt counter
 waitingtime = 1          # Waiting time in seconds for output
 
-# Objects
 pidcontroller = PIDController()
 logger = Logger(pidcontroller.kp, pidcontroller.ki, pidcontroller.kd, pidcontroller.refposition)
 encoder = Encoder(23, 24)
@@ -68,6 +67,7 @@ def stopPressed():
         # ...
 
         print("Stopping")
+        logger.showLoggings(feedback=True)
 
 
 if __name__ == '__main__':

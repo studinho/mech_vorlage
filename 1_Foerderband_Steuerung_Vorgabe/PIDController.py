@@ -10,7 +10,7 @@ class PIDController:
         """
         Save relevant constants to self
         """
-        # Predefine constants:
+        # Predefine constants and set variables:
         self.refposition = 415               # Reference position in mm
         self.errorLinear = self.refposition  # Initial error
         self.errorIntegral = 0
@@ -34,7 +34,7 @@ class PIDController:
         # ToDo
         # ...
 
-        # Save the three parts of the controler in a vector
+        # Save the three parts of the controller in a vector
         PIDactions = [p_part, i_part, d_part]
         # The output speed is the sum of the parts
         targetValue = sum(PIDactions)

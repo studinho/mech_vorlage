@@ -1,6 +1,5 @@
 # Copyright 2020 Hochschule Luzern - Informatik
 # Author: Peter Sollberger <peter.sollberger@hslu.ch>
-
 import RPi.GPIO as GPIO
 
 
@@ -73,7 +72,7 @@ class Encoder:
 
     def getPosition(self):
         """
-        :return: Current position
+        :return: Current position in [mm]
         """
         # 1024 tics/rotation, 4 edge-detects pro tic, pi * 58 mm/rotation
         return int(self.pos / 1024 / 4 * 3.142 * 58)
