@@ -1,6 +1,6 @@
 # Copyright 2020 Hochschule Luzern - Informatik
 # Author: Peter Sollberger <peter.sollberger@hslu.ch>
-
+import logging
 from time import sleep, time
 from gpiozero import DigitalInputDevice, LED, Button
 from Encoder import Encoder
@@ -11,7 +11,6 @@ from Logger import Logger
 
 # Predefine constants:
 running = False          # Controller state
-count = 0                # Interrupt counter
 waitingtime = 1          # Waiting time in seconds for output
 
 pidcontroller = PIDController()
@@ -29,9 +28,10 @@ def timerPinIRQ():
     3. Send current speed to Motor
     4. Save significant data for visualization.
     """
-    global count
-
-    count += 1          # Increase count
+    current_position = encoder.getPosition()
+    motor_speed, pid_actions = pidcontroller.calculateTargetValue(current_position)
+    motor.setSpeed(motor_speed)
+    logger.log(current_position, motor_speed, pid_actions)
     # TODO: Führen Sie folgende Schritte aus, wenn der Motor laufen soll, also wenn 'running' True ist
     #  1. lesen Sie aus dem 'encoder'-Objekt die aktuelle Position aus
     #  2. berechnen Sie mit Hilfe des 'pidcontroller' die neue Geschwindigkeit
@@ -77,7 +77,7 @@ def stopPressed():
 
 if __name__ == '__main__':
     """
-    Main loop outputs actual position, speed and IRQ count every second.
+    Main loop outputs actual position and speed every second.
     """
     print("Starting main")
 
@@ -103,7 +103,6 @@ if __name__ == '__main__':
             pos = encoder.getPosition()
             v = motor.getSpeed()
             print("Position:", pos, "Speed: ", v)
-            count = 0
             elapsed = time() - now
             sleep(waitingtime - elapsed)
 
