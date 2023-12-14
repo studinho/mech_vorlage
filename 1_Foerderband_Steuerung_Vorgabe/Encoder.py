@@ -75,7 +75,7 @@ class Encoder:
         :return: Current position in [mm]
         """
         # 1024 tics/rotation, 4 edge-detects pro tic, pi * 58 mm/rotation
-        return int(self.pos / 1024 / 4 * 3.142 * 58)
+        return int(self.pos / 1024.0 / 4.0 * 3.142 * 58.0)
 
     def resetPosition(self):
         """
