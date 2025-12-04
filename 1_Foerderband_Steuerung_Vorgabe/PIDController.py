@@ -15,9 +15,9 @@ class PIDController:
         self.anti_windup = 1023  # Anti-windup for Integrator, 1023 equals 5V = max speed
 
         # PID constants:
-        self.kp = 0.5
-        self.Tn = 10
-        self.Tv = 0.001
+        self.kp = 259 * 1023 / 36
+        self.Tn = 22
+        self.Tv = 0.0
 
     def reset(self):
         """
@@ -45,9 +45,21 @@ class PIDController:
         #     und d_part abspeichern oder die Berechnungen direkt in die
         #     Liste der pid_actions schreiben
 
-        p_part = 0  # TODO: Berechnen Sie den P-Anteil
-        i_part = 0  # TODO: Berechnen Sie den I-Anteil
-        d_part = 0  # TODO: Berechnen Sie den D-Anteil
+        error_linear_old = self.error_linear
+        self.error_linear = self.reference_value - actual_value
+
+        self.error_integral += self.error_linear*0.01  # assuming a sample time of 0.01s
+        # Anti-windup
+        if self.error_integral * self.kp / self.Tn > self.anti_windup:
+            self.error_integral = self.anti_windup / self.Tn * self.kp
+        elif self.error_integral * self.kp / self.Tn < -self.anti_windup:
+            self.error_integral = -self.anti_windup / self.Tn * self.kp 
+        
+        error_derivative = (self.error_linear - error_linear_old) / 0.01  # assuming a sample time of 0.01s
+
+        p_part = self.kp * self.error_linear  # TODO: Berechnen Sie den P-Anteil
+        i_part = self.kp / self.Tn * self.error_integral  # TODO: Berechnen Sie den I-Anteil
+        d_part = self.kp * self.Tv * error_derivative  # TODO: Berechnen Sie den D-Anteil
 
         # Save the three parts of the controller in a vector
         pid_actions = [p_part, i_part, d_part]
